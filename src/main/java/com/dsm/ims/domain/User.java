@@ -1,9 +1,19 @@
 package com.dsm.ims.domain;
 
-public class user {
+import javax.persistence.*;
 
+@Entity
+@Table(name = "user")
+public class User {
+
+    @Id
+    @Column(name = "id")
     private String id;
+
+    @Column(name = "pw")
     private String pw;
+
+    @Column(name = "name")
     private String name;
 
     public String getId() {
