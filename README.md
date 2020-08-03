@@ -1,2 +1,3 @@
-# White
-이진혁 레포
+# IMS
+
+**Backend APIs (with Spring)**
