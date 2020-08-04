@@ -16,6 +16,9 @@ public class User {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "token")
+    private String reflashToken;
+
     public String getId() {
         return id;
     }
@@ -38,6 +41,14 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getReflashToken() {
+        return reflashToken;
+    }
+
+    public void setReflashToken(String reflashToken) {
+        this.reflashToken = reflashToken;
     }
 
 }
