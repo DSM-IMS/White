@@ -9,7 +9,6 @@ import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
 import java.util.Date;
 
-@Service
 public class JwtService {
 
     private static final String SECURE_KEY = "dhwlddjgmanf";
@@ -27,7 +26,7 @@ public class JwtService {
                 .compact();
     }
 
-    public String createReflashToken(String userId) {
+    public String createRefreshToken(String userId) {
         return Jwts.builder()
                 .setHeaderParam("typ", "JWT")
                 .setSubject("reflash token")

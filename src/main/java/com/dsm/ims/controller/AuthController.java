@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.http.HttpRequest;
@@ -26,14 +27,14 @@ public class AuthController {
     }
 
     @GetMapping("/login")
-    public JSONObject login(UserForm userForm) {
+    public String login(UserForm userForm) {
         if(userForm == null) throw new IllegalArgumentException();
 
         User user = new User();
         user.setId(userForm.getId());
         user.setPw(userForm.getPw());
 
-        JSONObject json = authService.login(user);
+        String json = authService.login(user);
 
         return json;
     }

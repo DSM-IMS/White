@@ -3,21 +3,28 @@ package com.dsm.ims.domain;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "user")
 public class User {
 
     @Id
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int uid;
+
     private String id;
 
-    @Column(name = "pw")
     private String pw;
 
-    @Column(name = "name")
     private String name;
 
     @Column(name = "token")
-    private String reflashToken;
+    private String refreshToken;
+
+    public int getUid() {
+        return uid;
+    }
+
+    public void setUid(int uid) {
+        this.uid = uid;
+    }
 
     public String getId() {
         return id;
@@ -43,12 +50,12 @@ public class User {
         this.name = name;
     }
 
-    public String getReflashToken() {
-        return reflashToken;
+    public String getRefreshToken() {
+        return refreshToken;
     }
 
-    public void setReflashToken(String reflashToken) {
-        this.reflashToken = reflashToken;
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 
 }
