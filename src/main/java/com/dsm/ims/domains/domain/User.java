@@ -1,10 +1,11 @@
-package com.dsm.ims.domain;
+package com.dsm.ims.domains.domain;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
 @Entity
 public class User {
-
     @Id
     private String id;
 
@@ -38,13 +39,4 @@ public class User {
     public void setName(String name) {
         this.name = name;
     }
-
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
-    }
-
 }
