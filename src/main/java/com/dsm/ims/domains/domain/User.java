@@ -39,4 +39,12 @@ public class User {
     public void setName(String name) {
         this.name = name;
     }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 }

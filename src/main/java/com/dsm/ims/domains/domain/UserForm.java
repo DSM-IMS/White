@@ -1,7 +1,6 @@
-package com.dsm.ims.controller.form;
+package com.dsm.ims.domains.domain;
 
 public class UserForm {
-
     private String id;
     private String pw;
 
@@ -20,5 +19,4 @@ public class UserForm {
     public void setPw(String pw) {
         this.pw = pw;
     }
-
 }
