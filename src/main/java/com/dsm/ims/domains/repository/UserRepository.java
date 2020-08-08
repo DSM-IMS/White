@@ -20,4 +20,13 @@ public class UserRepository {
     public User findById(String id) {
         return entityManager.find(User.class, id);
     }
+
+    public User findByRefreshToken(String refreshToken) {
+        return entityManager.createQuery("SELECT u FROM User u WHERE u.token = :token")
+                .setParameter("token", refreshToken)
+                .getResultList()
+                .stream()
+                .findAny()
+                .get();
+    }
 }

@@ -48,11 +48,11 @@ public class JwtService {
                 .getExpiration();
     }
 
-    public boolean isValid(String jwt) {
+    public boolean isValid(String token) {
         try {
             Jws<Claims> jws = Jwts.parser()
                     .setSigningKey(KEY)
-                    .parseClaimsJws(jwt);
+                    .parseClaimsJws(token);
 
             return true;
         } catch(Exception e) {
@@ -60,12 +60,12 @@ public class JwtService {
         }
     }
 
-    public boolean isTimeOut(String jwt) {
+    public boolean isTimeOut(String token) {
         try {
             Date now = new Date();
             Date expiration = Jwts.parser()
                     .setSigningKey(KEY)
-                    .parseClaimsJws(jwt)
+                    .parseClaimsJws(token)
                     .getBody()
                     .getExpiration();
 

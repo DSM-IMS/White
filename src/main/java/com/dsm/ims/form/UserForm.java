@@ -1,4 +1,4 @@
-package com.dsm.ims.domains.domain;
+package com.dsm.ims.form;
 
 public class UserForm {
     private String id;
