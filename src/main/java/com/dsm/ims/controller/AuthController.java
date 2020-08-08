@@ -30,9 +30,7 @@ public class AuthController {
     public String refreshToken(RefreshTokenForm refreshTokenForm) {
         String refreshToken = refreshTokenForm.getRefreshToken();
 
-
-
-        return null;
+        return authService.accessTokenReissuance(refreshToken);
     }
 
     @GetMapping("/join")

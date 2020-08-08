@@ -22,7 +22,7 @@ public class UserRepository {
     }
 
     public User findByRefreshToken(String refreshToken) {
-        return entityManager.createQuery("SELECT u FROM User u WHERE u.token = :token")
+        return entityManager.createQuery("SELECT u FROM User u WHERE u.token = :token", User.class)
                 .setParameter("token", refreshToken)
                 .getResultList()
                 .stream()

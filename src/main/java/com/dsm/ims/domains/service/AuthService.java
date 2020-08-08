@@ -46,12 +46,12 @@ public class AuthService {
 
         String accessToken = jwtService.createAccessToken(userId);
         String refreshToken = jwtService.createRefreshToken(userId);
-        LocalDateTime expiration = LocalDateTime.ofInstant(jwtService.getExpiration(accessToken).toInstant(), ZoneId.of("Asia/Seoul"));
+        LocalDateTime accessTokenExpiration = LocalDateTime.ofInstant(jwtService.getExpiration(accessToken).toInstant(), ZoneId.of("Asia/Seoul"));
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("accessToken", accessToken);
-        jsonObject.put("refreshToken", refreshToken);
-        jsonObject.put("expiration", expiration);
+        jsonObject.put("access_token", accessToken);
+        jsonObject.put("refresh_token", refreshToken);
+        jsonObject.put("access_expiration", accessTokenExpiration);
 
         return jsonObject.toJSONString();
     }
@@ -84,7 +84,12 @@ public class AuthService {
         else
             throw new RefreshTokenMismatchException();
 
-        return accessToken;
+        LocalDateTime accessTokenExpiration = LocalDateTime.ofInstant(jwtService.getExpiration(accessToken).toInstant(), ZoneId.of("Asia/Seoul"));
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("access_token", accessToken);
+        jsonObject.put("access_expiration", accessTokenExpiration);
+
+        return jsonObject.toJSONString();
     }
 
     public void join(User user) {
