@@ -6,6 +6,8 @@ import com.dsm.ims.exception.IdMismatchException;
 import com.dsm.ims.exception.PasswordMismatchException;
 import com.dsm.ims.exception.RefreshTokenMismatchException;
 import com.dsm.ims.exception.TokenExpirationException;
+import com.dsm.ims.form.AccessTokenReissuanceResultForm;
+import com.dsm.ims.form.LoginResultForm;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +33,7 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-    public String login(User user) throws PasswordMismatchException, IdMismatchException {
+    public LoginResultForm login(User user) throws PasswordMismatchException, IdMismatchException {
         String userId = user.getId();
         String userPw = sha512(user.getPw());
 
@@ -48,12 +50,7 @@ public class AuthService {
         String refreshToken = jwtService.createRefreshToken(userId);
         LocalDateTime accessTokenExpiration = LocalDateTime.ofInstant(jwtService.getExpiration(accessToken).toInstant(), ZoneId.of("Asia/Seoul"));
 
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("access_token", accessToken);
-        jsonObject.put("refresh_token", refreshToken);
-        jsonObject.put("access_expiration", accessTokenExpiration);
-
-        return jsonObject.toJSONString();
+        return new LoginResultForm(accessToken, refreshToken, accessTokenExpiration);
     }
 
     private String sha512(String original) {
@@ -71,7 +68,7 @@ public class AuthService {
         return resultHex;
     }
 
-    public String accessTokenReissuance(String refreshToken) {
+    public AccessTokenReissuanceResultForm accessTokenReissuance(String refreshToken) {
         User findUser = null;
         if(jwtService.isValid(refreshToken) && jwtService.isTimeOut(refreshToken))
             findUser = userRepository.findByRefreshToken(refreshToken);
@@ -85,11 +82,8 @@ public class AuthService {
             throw new RefreshTokenMismatchException();
 
         LocalDateTime accessTokenExpiration = LocalDateTime.ofInstant(jwtService.getExpiration(accessToken).toInstant(), ZoneId.of("Asia/Seoul"));
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("access_token", accessToken);
-        jsonObject.put("access_expiration", accessTokenExpiration);
 
-        return jsonObject.toJSONString();
+        return new AccessTokenReissuanceResultForm(accessToken, accessTokenExpiration);
     }
 
     public void join(User user) {
