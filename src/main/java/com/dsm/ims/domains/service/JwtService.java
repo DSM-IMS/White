@@ -1,6 +1,6 @@
 package com.dsm.ims.domains.service;
 
-import com.dsm.ims.exception.UnauthorizedException;
+import com.dsm.ims.utils.exception.TokenExpirationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -56,7 +56,7 @@ public class JwtService {
 
             return true;
         } catch(Exception e) {
-            throw new UnauthorizedException();
+            throw new TokenExpirationException();
         }
     }
 
@@ -69,13 +69,21 @@ public class JwtService {
                     .getBody()
                     .getExpiration();
 
-            if(expiration.after(now)) {
+            if(expiration.after(now))
                 return true;
-            }
 
             return false;
         } catch(Exception e) {
             return false;
         }
+    }
+
+    public void killToken(String token) {
+        Jwts.parser()
+                .setSigningKey(KEY)
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration()
+                .setTime(0);
     }
 }

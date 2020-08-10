@@ -1,4 +1,4 @@
-package com.dsm.ims.exception;
+package com.dsm.ims.utils.exception;
 
 public class TokenExpirationException extends RuntimeException {
     public TokenExpirationException() {

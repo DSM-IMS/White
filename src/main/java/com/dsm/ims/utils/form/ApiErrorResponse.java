@@ -1,4 +1,4 @@
-package com.dsm.ims.exception;
+package com.dsm.ims.utils.form;
 
 public class ApiErrorResponse {
 

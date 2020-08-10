@@ -1,4 +1,4 @@
-package com.dsm.ims.form;
+package com.dsm.ims.utils.form;
 
 import io.swagger.annotations.ApiModelProperty;
 

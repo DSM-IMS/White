@@ -2,13 +2,11 @@ package com.dsm.ims.domains.service;
 
 import com.dsm.ims.domains.domain.User;
 import com.dsm.ims.domains.repository.UserRepository;
-import com.dsm.ims.exception.IdMismatchException;
-import com.dsm.ims.exception.PasswordMismatchException;
-import com.dsm.ims.exception.RefreshTokenMismatchException;
-import com.dsm.ims.exception.TokenExpirationException;
-import com.dsm.ims.form.AccessTokenReissuanceResultForm;
-import com.dsm.ims.form.LoginResultForm;
-import org.json.simple.JSONObject;
+import com.dsm.ims.utils.exception.IdOrPasswordMismatchException;
+import com.dsm.ims.utils.exception.RefreshTokenMismatchException;
+import com.dsm.ims.utils.exception.TokenExpirationException;
+import com.dsm.ims.utils.form.AccessTokenReissuanceResultForm;
+import com.dsm.ims.utils.form.LoginResultForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,22 +31,22 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-    public LoginResultForm login(User user) throws PasswordMismatchException, IdMismatchException {
+    public LoginResultForm login(User user) {
         String userId = user.getId();
         String userPw = sha512(user.getPw());
 
-        User findUser = userRepository.findById(userId);
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new IdOrPasswordMismatchException());
 
-        if (findUser == null)
-            throw new IdMismatchException();
         String findUserPw = findUser.getPw();
-
         if (!(userPw.equals(findUserPw)))
-            throw new PasswordMismatchException();
+            throw new IdOrPasswordMismatchException();
 
         String accessToken = jwtService.createAccessToken(userId);
         String refreshToken = jwtService.createRefreshToken(userId);
         LocalDateTime accessTokenExpiration = LocalDateTime.ofInstant(jwtService.getExpiration(accessToken).toInstant(), ZoneId.of("Asia/Seoul"));
+
+        findUser.setRefreshToken(refreshToken);
 
         return new LoginResultForm(accessToken, refreshToken, accessTokenExpiration);
     }
@@ -64,16 +62,14 @@ public class AuthService {
             System.out.println("존재하지 않는 인코딩 : " + ENCODING);
             System.out.println("존재하지 않는 암호화 : " + ALGORITHM);
         }
-        System.out.println(resultHex);
         return resultHex;
     }
 
     public AccessTokenReissuanceResultForm accessTokenReissuance(String refreshToken) {
         User findUser = null;
         if(jwtService.isValid(refreshToken) && jwtService.isTimeOut(refreshToken))
-            findUser = userRepository.findByRefreshToken(refreshToken);
-        else
-            throw new TokenExpirationException();
+            findUser = userRepository.findByRefreshToken(refreshToken)
+                    .orElseThrow(() -> new TokenExpirationException());
 
         String accessToken = null;
         if(refreshToken.equals(findUser.getRefreshToken()))
@@ -84,6 +80,15 @@ public class AuthService {
         LocalDateTime accessTokenExpiration = LocalDateTime.ofInstant(jwtService.getExpiration(accessToken).toInstant(), ZoneId.of("Asia/Seoul"));
 
         return new AccessTokenReissuanceResultForm(accessToken, accessTokenExpiration);
+    }
+
+    public void logout(String id, String accessToken) {
+        String refreshToken = null;
+        if(jwtService.isValid(accessToken) && jwtService.isTimeOut(accessToken))
+            refreshToken = userRepository.findById(id)
+                    .orElseThrow(() -> new TokenExpirationException()).getRefreshToken();
+        jwtService.killToken(refreshToken);
+        jwtService.killToken(accessToken);
     }
 
     public void join(User user) {
